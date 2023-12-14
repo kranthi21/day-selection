@@ -141,6 +141,7 @@ class App extends Component{
                 selected={selectedDate}
                 onChange={this.handleDateChange}
                 minDate={new Date()}
+                value = "mm/dd/yy"
               />
             </div>
           </div>
