@@ -118,8 +118,9 @@
 
 .days-div{
   display: flex;
-  flex-direction: row;
+  justify-content: center;
   margin: 20px;
+  width: 100%;
 }
 
 .day-div{
@@ -138,4 +139,15 @@
   border-radius: 5px;
   border-style: solid;
   border-width: 1px;
+}
+
+.task-list{
+  background-color: rgb(174, 174, 242);
+  width: 83%;
+  min-height: 150px;
+  border-radius: 5px;
+}
+
+.task-empty{
+  text-align: center;
 }

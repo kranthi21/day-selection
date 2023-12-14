@@ -5,7 +5,7 @@ import './TaskList.css';
 const TaskList = ({ tasks, onEdit, onDelete, onDragEnd }) => {
   return (
     <DragDropContext onDragEnd={onDragEnd}>
-      <Droppable droppableId="tasks" className="tasks">
+      <Droppable className="tasks " droppableId="tasks" >
         {(provided) => (
           <div className='inner-tasks' {...provided.droppableProps} ref={provided.innerRef}>
             {tasks.map((task, index) => (
@@ -17,12 +17,21 @@ const TaskList = ({ tasks, onEdit, onDelete, onDragEnd }) => {
                     {...provided.dragHandleProps}
                     className="task"
                   >
-                    <div className='title-detail'>{task.title}</div>
-                    <div className='description-detail'>{task.description}</div>
-                    <button onClick={() => onEdit(task.id, /* pass new title, new description */)}>
-                      Edit
-                    </button>
-                    <button onClick={() => onDelete(task.id)}>Delete</button>
+
+                    <div className='details'>
+                      <div className='title-detail'>{task.title}</div>
+                      <div className='description-detail'>{task.description}</div>    
+                    </div>
+                    <div className='detail-button'>
+                      <div className='button-div'>
+                      <button className='button' onClick={() => onEdit(task.id, task.title, task.description)}>
+                        Edit
+                      </button>
+                      </div>
+                      <div className='button-div'>
+                      <button className="button" onClick={() => onDelete(task.id)}>Delete</button>
+                      </div>
+                    </div>
                   </div>
                 )}
               </Draggable>

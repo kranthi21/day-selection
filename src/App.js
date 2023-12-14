@@ -12,6 +12,8 @@ const initalState = {
   day: '',
   tasks: [],
   selectedDay : 'all',
+  editmode:'no',
+  editId:''
 };
 
 const days = ["Sun","Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -21,6 +23,7 @@ class App extends Component{
   constructor(){
     super();
     this.state = initalState;
+    
   }
   
   handleDateChange = (date) => {
@@ -32,10 +35,19 @@ class App extends Component{
   };
 
   addTask = () => {
-    const { title, description, selectedDate, day } = this.state;
-
+    const { title, description, selectedDate, day, editmode, editId } = this.state;
+    console.log(selectedDate)
     if(!title || !selectedDate){
       alert("Enter required fields");
+    }
+    else if(editmode === "yes"){
+      this.setState((prevState) => ({
+          tasks: prevState.tasks.map((task) =>
+            task.id === editId ? { ...task, title: title, description: description } : task
+          ),
+        }));
+      this.setState({editmode:"no"});
+      this.setState({editId: ""});
     }
     else{
       const newTask = {
@@ -54,12 +66,19 @@ class App extends Component{
     }
   };
 
-  editTask = (id, newTitle, newDescription) => {
-    this.setState((prevState) => ({
-      tasks: prevState.tasks.map((task) =>
-        task.id === id ? { ...task, title: newTitle, description: newDescription } : task
-      ),
-    }));
+  editTask = (id, Title, Description) => {
+    this.setState({editmode: "yes"});
+    this.setState({editId:id});
+    this.setState({title:Title});
+    this.setState({description:Description});
+    
+    // this.addTask();
+
+    // this.setState((prevState) => ({
+    //   tasks: prevState.tasks.map((task) =>
+    //     task.id === id ? { ...task, title: newTitle, description: newDescription } : task
+    //   ),
+    // }));
   };
 
   deleteTask = (id) => {
@@ -103,55 +122,71 @@ class App extends Component{
         </div>
       );
     });
-    return(
+    return (
       <div className="app center">
-      
         <div className="input-container ">
-          <div className='row'>
-            <div className='title-div'>
-            <input
-              type="text"
-              placeholder="Title"
-              className='title'
-              onChange={(e) => this.setState({title: e.target.value})}
-            />
+          <div className="row">
+            <div className="title-div">
+              <input
+                type="text"
+                placeholder="Title"
+                className="title"
+                value={title}
+                onChange={(e) => this.setState({ title: e.target.value })}
+              />
             </div>
-            <div className='date-div'>
-              <DatePicker 
-                className='date' 
-                selected={selectedDate} 
-                onChange={this.handleDateChange} 
-                minDate={new Date()} />
+            <div className="date-div">
+              <DatePicker
+                className="date"
+                selected={selectedDate}
+                onChange={this.handleDateChange}
+                minDate={new Date()}
+              />
             </div>
           </div>
-          <div className='row'>
-            <div className='description-div'>
+          <div className="row">
+            <div className="description-div">
               <input
                 type="text"
                 placeholder="Description"
-                className='description'
-                onChange={(e) => this.setState({description: e.target.value})}
+                className="description"
+                value = {description}
+                onChange={(e) => this.setState({ description: e.target.value })}
               />
             </div>
-            <div className='save-div'>
-              <button className="save-button" onClick={this.addTask}>Save</button>
+            <div className="save-div">
+              <button className="save-button" onClick={this.addTask}>
+                Save
+              </button>
             </div>
           </div>
         </div>
 
-      <div className='days-div'>
-        {dayArray}
-        <div className='all-div'>
-        <a  onClick={(e)=>this.setState({selectedDay : 'all'})}>ALL</a>
+        <div className="days-div">
+          {dayArray}
+          <div className="all-div">
+            <a onClick={(e) => this.setState({ selectedDay: "all" })}>ALL</a>
+          </div>
         </div>
+        <div className="center">
+          <h1>Tasks:</h1>
+        </div>
+        <div className='task-list'>
+          {this.state.tasks.length === 0 ? (
+            <div className='task-empty'>
+              <h3>no tasks added</h3>
+            </div>
+          ) : (
+            <TaskList
+              tasks={this.filterTasksByDay()}
+              onEdit={this.editTask}
+              onDelete={this.deleteTask}
+              onDragEnd={this.onDragEnd}
+            />
+          )}
+        </div>
+
       </div>
-      <TaskList
-        tasks={this.filterTasksByDay()}
-        onEdit={this.editTask}
-        onDelete={this.deleteTask}
-        onDragEnd={this.onDragEnd}
-      />
-    </div>
     );
   }
 }

@@ -3,20 +3,49 @@
 }
 
 
-
 .description-detail{
     width: 100%;
 }
 
-.tasks{
+/* .tasks{
+    width: 80%;
+    height: 80%;
+
+} */
+
+.inner-tasks{
+    /* background-color: rgb(191, 121, 121); */
+    width:100%;
+    padding: 10px;
+    min-height: 100px;
+    max-height: fit-content;
+    border-radius: 5px;
+
+}
+
+.details{
+    flex-direction: row;
     width: 80%;
 }
 
+.detail-button{
+    width: 15%;
+    flex-direction: column;
+}
 .task{
+    width: 95%;
+    display: flex;
+}
+
+.button-div{
     width: 100%;
 }
-.inner-tasks{
-    background-color: rgb(167, 157, 157);
-    width:80%;
-    padding: 10px;
+
+.button{
+    border: solid 1px;
+    border-radius: 3px;
+    background-color: aliceblue;
+    width: 100%;
+    padding: 3px;
+    margin: 5px;
 }
