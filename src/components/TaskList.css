@@ -2,6 +2,21 @@
     width:100%;
 }
 
+
+
+.description-detail{
+    width: 100%;
+}
+
+.tasks{
+    width: 80%;
+}
+
 .task{
     width: 100%;
+}
+.inner-tasks{
+    background-color: rgb(167, 157, 157);
+    width:80%;
+    padding: 10px;
 }
