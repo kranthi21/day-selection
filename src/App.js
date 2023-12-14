@@ -1,82 +1,110 @@
-import React, { useState } from 'react';
+import React, { Component } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import TaskList from './components/TaskList';
 
 import './App.css';
 
+const initalState = {
+  title : '',
+  description : '',
+  selectedDate : new Date(),
+  day: '',
+  tasks: [],
+  selectedDay : 'all',
+};
+
+const days = ["Sun","Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 
-const App = () => {
-  const [tasks, setTasks] = useState([]);
-  const [selectedDate, setSelectedDate] = useState(new Date());
-
-  const handleDateChange = (date) => {
-    setSelectedDate(date);
+class App extends Component{
+  constructor(){
+    super();
+    this.state = initalState;
+  }
+  
+  handleDateChange = (date) => {
+    this.setState({selectedDate : date});
+    const dt = new Date(date);
+    const dayIndex = dt.getDay();
+    const dayName = days[dayIndex];
+    this.setState({day:dayName});
   };
 
-  const addTask = (title, description) => {
-    const newTask = {
-      id: new Date().getTime(),
-      title,
-      description,
-    };
+  addTask = () => {
+    const { title, description, selectedDate, day } = this.state;
 
-    setTasks([...tasks, newTask]);
+    if(!title || !selectedDate){
+      alert("Enter required fields");
+    }
+    else{
+      const newTask = {
+        id: new Date().getTime(),
+        title,
+        description,
+        selectedDate,
+        day
+      };
+
+      this.setState((prevState) => ({
+        tasks: [...prevState.tasks, newTask],
+        title: '',
+        description: '',
+      }));
+    }
   };
 
-  const editTask = (id, newTitle, newDescription) => {
-    const updatedTasks = tasks.map((task) =>
-      task.id === id ? { ...task, title: newTitle, description: newDescription } : task
-    );
-
-    setTasks(updatedTasks);
+  editTask = (id, newTitle, newDescription) => {
+    this.setState((prevState) => ({
+      tasks: prevState.tasks.map((task) =>
+        task.id === id ? { ...task, title: newTitle, description: newDescription } : task
+      ),
+    }));
   };
 
-  const deleteTask = (id) => {
-    const updatedTasks = tasks.filter((task) => task.id !== id);
-    setTasks(updatedTasks);
+  deleteTask = (id) => {
+    this.setState((prevState) => ({
+      tasks: prevState.tasks.filter((task) => task.id !== id),
+    }));
   };
 
-  const onDragEnd = (result) => {
+  onDragEnd = (result) => {
     if (!result.destination) return;
 
-    const updatedTasks = [...tasks];
+    const updatedTasks = [...this.state.tasks];
     const [reorderedTask] = updatedTasks.splice(result.source.index, 1);
     updatedTasks.splice(result.destination.index, 0, reorderedTask);
 
-    setTasks(updatedTasks);
+    this.setState({ tasks: updatedTasks });
   };
 
-  const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-
-  const dayArray = days.map((day)=> {
-    return (
-      <div 
-        className='day-div' 
-        key ={day} onClick = {()=>onDaySelect(day)}>{day}
-      </div>
-    );
-  });
-
-  const onDaySelect = (day) => {
-    console.log(day);
-
+  filterTasksByDay = () => {
+    const { tasks, selectedDay } = this.state;
+    if(selectedDay === "all"){
+      return tasks;
+    }
+    return tasks.filter((task) => task.day === selectedDay);
   };
 
-  const filterTasksByDate = () => {
-    return tasks.filter((task) => {
-      const taskDate = new Date(task.date);
+ onDaySelect = (day) => {
+  console.log(day);
+  this.setState({selectedDay: day});
+
+};
+  
+  render(){
+    const {title, description, selectedDate} = this.state;
+    
+    const dayArray = days.map((day)=> {
       return (
-        taskDate.getDate() === selectedDate.getDate() &&
-        taskDate.getMonth() === selectedDate.getMonth() &&
-        taskDate.getFullYear() === selectedDate.getFullYear()
+        <div 
+          className='day-div' 
+          key ={day} onClick = {()=>this.onDaySelect(day)}>{day}
+        </div>
       );
     });
-  };
-
-  return (
-    <div className="app center">
+    return(
+      <div className="app center">
       
         <div className="input-container ">
           <div className='row'>
@@ -85,11 +113,15 @@ const App = () => {
               type="text"
               placeholder="Title"
               className='title'
-              // Add logic to handle title input
+              onChange={(e) => this.setState({title: e.target.value})}
             />
             </div>
             <div className='date-div'>
-              <DatePicker className='date' selected={selectedDate} onChange={handleDateChange} minDate={new Date()} />
+              <DatePicker 
+                className='date' 
+                selected={selectedDate} 
+                onChange={this.handleDateChange} 
+                minDate={new Date()} />
             </div>
           </div>
           <div className='row'>
@@ -98,26 +130,31 @@ const App = () => {
                 type="text"
                 placeholder="Description"
                 className='description'
-                // Add logic to handle description input
+                onChange={(e) => this.setState({description: e.target.value})}
               />
             </div>
             <div className='save-div'>
-              <button className="save-button" onClick={() => addTask(/* pass title and description */)}>Save</button>
+              <button className="save-button" onClick={this.addTask}>Save</button>
             </div>
           </div>
         </div>
 
       <div className='days-div'>
         {dayArray}
+        <div className='all-div'>
+        <a  onClick={(e)=>this.setState({selectedDay : 'all'})}>ALL</a>
+        </div>
       </div>
       <TaskList
-        tasks={filterTasksByDate()}
-        onEdit={editTask}
-        onDelete={deleteTask}
-        onDragEnd={onDragEnd}
+        tasks={this.filterTasksByDay()}
+        onEdit={this.editTask}
+        onDelete={this.deleteTask}
+        onDragEnd={this.onDragEnd}
       />
     </div>
-  );
-};
+    );
+  }
+}
+
 
 export default App;

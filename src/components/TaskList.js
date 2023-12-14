@@ -16,7 +16,7 @@ const TaskList = ({ tasks, onEdit, onDelete, onDragEnd }) => {
                     {...provided.dragHandleProps}
                     className="task"
                   >
-                    <div>{task.title}</div>
+                    <div className='title-detail'>{task.title}</div>
                     <div>{task.description}</div>
                     <button onClick={() => onEdit(task.id, /* pass new title, new description */)}>
                       Edit

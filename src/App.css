@@ -130,3 +130,12 @@
   border-style: solid;
   border-width: 1px;
 }
+
+.all-div{
+  background-color:rgb(208, 217, 225);
+  padding: 20px;
+  margin-left: 10px;
+  border-radius: 5px;
+  border-style: solid;
+  border-width: 1px;
+}
